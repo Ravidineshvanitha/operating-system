@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Process structure
+typedef struct {
+    int pid;            // Process ID
+    int arrival_time;   // Arrival time of the process
+    int burst_time;     // Burst time of the process
+    int priority;       // Priority of the process
+} Process;
+
+// Function to swap two processes
+void swap(Process *xp, Process *yp) {
+    Process temp = *xp;
+    *xp = *yp;
+    *yp = temp;
+}
+
+// Function to perform Selection Sort on processes based on priority
+void sortByPriority(Process processes[], int n) {
+    int i, j;
+    for (i = 0; i < n - 1; i++) {
+        for (j = 0; j < n - i - 1; j++) {
+            if (processes[j].priority > processes[j + 1].priority) {
+                swap(&processes[j], &processes[j + 1]);
+            }
+        }
+    }
+}
+
+// Function to calculate waiting time for each process
+void calculateWaitingTime(Process processes[], int n, int waiting_time[]) {
+    waiting_time[0] = 0; // First process has 0 waiting time
+
+ 
