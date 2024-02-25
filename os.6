@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Process structure
+typedef struct {
+    int pid;            // Process ID
+    int arrival_time;   // Arrival time of the process
+    int burst_time;     // Burst time of the process
+    int priority;       // Priority of the process
+    int remaining_time; // Remaining burst time of the process
+} Process;
+
+// Function to swap two processes
+void swap(Process *xp, Process *yp) {
+    Process temp = *xp;
+    *xp = *yp;
+    *yp = temp;
+}
+
+// Function to perform Selection Sort on processes based on priority
+void sortByPriority(Process processes[], int n) {
+    int i, j;
+    for (i = 0; i < n - 1; i++) {
+        for (j = 0; j < n - i - 1; j++) {
+            if (processes[j].priority > processes[j + 1].priority) {
+                swap(&processes[j], &processes[j + 1]);
+            }
+        }
+    }
+}
+
+// Function to calculate waiting time for each process
+void calculateWaitingTime(Process processes[], int n, int waiting_time[]) {
+    int currentTime = 0;
+
+    // Loop through all processes
+    for (int i = 0; i < n; i++) {
+        waiting_time[i] = currentTime - processes[i].arrival_time;
+        currentTime += processes[i].burst_time;
+    }
+}
+
+// Function to calculate turnaround time for each process
+void calculateTurnaroundTime(Process processes[], int n, int waiting_time[], int turnaround_time[]) {
+    // Calculate turnaround time for each process
+    for (int i = 0; i < n; i++) {
+        turnaround_time[i] = processes[i].burst_time + waiting_time[i];
+    }
+}
+void calculateAverageTime(Process processes[], int n) {
+    int waiting_time[n], turnaround_time[n];
+    float total_waiting_time = 0, total_turnaround_time = 0;
+
+    // Sort processes by priority
+    sortByPriority(processes, n);
+
+    // Calculate waiting time for each process
+    calculateWaitingTime(processes, n, waiting_time);
+
+    // Calculate turnaround time for each process
+    calculateTurnaroundTime(processes, n, waiting_time, turnaround_time);
+
+    // Display process details and calculate total
