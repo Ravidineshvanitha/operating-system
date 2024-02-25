@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <semaphore.h>
+#include <unistd.h>
+
+#define NUM_PHILOSOPHERS 5
+
+// Define states for philosophers
+#define THINKING 0
+#define HUNGRY 1
+#define EATING 2
+
+pthread_mutex_t mutex; // Mutex for critical sections
+sem_t semaphores[NUM_PHILOSOPHERS]; // Semaphores for each philosopher
+
+int state[NUM_PHILOSOPHERS]; // State of each philosopher
+int phil[NUM_PHILOSOPHERS] = {0, 1, 2, 3, 4}; // Philosopher IDs
+
+// Function prototypes
+void *philosopher(void *arg);
+void take_forks(int philosopher_id);
+void put_forks(int philosopher_id);
+void test(int philosopher_id);
+
+int main() {
+    pthread_t threads[NUM_PHILOSOPHERS];
+
+    // Initialize mutex
+    pthread_mutex_init(&mutex, NULL);
+
+    // Initialize semaphores
+    for (int i = 0; i < NUM_PHILOSOPHERS; i++) {
+        sem_init(&s
