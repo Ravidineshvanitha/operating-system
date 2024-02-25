@@ -1,0 +1,135 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_FILES_PER_DIR 100
+#define MAX_DIRS 100
+#define MAX_NAME_LENGTH 50
+
+// Structure to represent a file
+typedef struct {
+    char name[MAX_NAME_LENGTH]; // File name
+    int exists;                 // File existence flag (1 if exists, 0 if not)
+} File;
+
+// Structure to represent a directory
+typedef struct {
+    char name[MAX_NAME_LENGTH];     // Directory name
+    int exists;                     // Directory existence flag (1 if exists, 0 if not)
+    File files[MAX_FILES_PER_DIR];  // Files in the directory
+} Directory;
+
+// Structure to represent the file system
+typedef struct {
+    Directory directories[MAX_DIRS]; // Directories in the file system
+    int num_dirs;                    // Number of directories in the file system
+} FileSystem;
+
+// Function to initialize directories
+void initializeDirectories(FileSystem *fs) {
+    fs->num_dirs = 0; // Initially, there are no directories
+    for (int i = 0; i < MAX_DIRS; i++) {
+        fs->directories[i].exists = 0; // Initially, no directories exist
+    }
+}
+
+// Function to create a new directory
+void createDirectory(FileSystem *fs, char *dirname) {
+    if (fs->num_dirs < MAX_DIRS) {
+        strcpy(fs->directories[fs->num_dirs].name, dirname); // Copy directory name
+        fs->directories[fs->num_dirs].exists = 1;            // Mark directory as existing
+        fs->num_dirs++;                                       // Increment number of directories
+        printf("Directory '%s' created successfully.\n", dirname);
+    } else {
+        printf("Cannot create directory '%s'. Maximum directories reached.\n", dirname);
+    }
+}
+
+// Function to create a new file in a directory
+void createFile(FileSystem *fs, char *dirname, char *filename) {
+    for (int i = 0; i < fs->num_dirs; i++) {
+        if (strcmp(fs->directories[i].name, dirname) == 0 && fs->directories[i].exists == 1) {
+            for (int j = 0; j < MAX_FILES_PER_DIR; j++) {
+                if (fs->directories[i].files[j].exists == 0) {
+                    strcpy(fs->directories[i].files[j].name, filename); // Copy filename
+                    fs->directories[i].files[j].exists = 1;              // Mark file as existing
+                    printf("File '%s' created successfully in directory '%s'.\n", filename, dirname);
+                    return;
+                }
+            }
+            printf("Cannot create file '%s' in directory '%s'. Maximum files reached.\n", filename, dirname);
+            return;
+        }
+    }
+    printf("Directory '%s' not found or does not exist.\n", dirname);
+}
+
+// Function to delete a file from a directory
+void deleteFile(FileSystem *fs, char *dirname, char *filename) {
+    for (int i = 0; i < fs->num_dirs; i++) {
+        if (strcmp(fs->directories[i].name, dirname) == 0 && fs->directories[i].exists == 1) {
+            for (int j = 0; j < MAX_FILES_PER_DIR; j++) {
+                if (strcmp(fs->directories[i].files[j].name, filename) == 0 && fs->directories[i].files[j].exists == 1) {
+                    strcpy(fs->directories[i].files[j].name, ""); // Clear filename
+                    fs->directories[i].files[j].exists = 0;        // Mark file as deleted
+                    printf("File '%s' deleted successfully from directory '%s'.\n", filename, dirname);
+                    return;
+                }
+            }
+            printf("File '%s' not found or already deleted in directory '%s'.\n", filename, dirname);
+            return;
+        }
+    }
+    printf("Directory '%s' not found or does not exist.\n", dirname);
+}
+
+// Function to list all files in a directory
+void listFiles(FileSystem *fs, char *dirname) {
+    for (int i = 0; i < fs->num_dirs; i++) {
+        if (strcmp(fs->directories[i].name, dirname) == 0 && fs->directories[i].exists == 1) {
+            printf("Files in directory '%s':\n", dirname);
+            for (int j = 0; j < MAX_FILES_PER_DIR; j++) {
+                if (fs->directories[i].files[j].exists == 1) {
+                    printf("- %s\n", fs->directories[i].files[j].name);
+                }
+            }
+            return;
+        }
+    }
+    printf("Directory '%s' not found or does not exist.\n", dirname);
+}
+
+int main() {
+    FileSystem fs;
+    char dirname[MAX_NAME_LENGTH];
+    char filename[MAX_NAME_LENGTH];
+    int choice;
+
+    initializeDirectories(&fs);
+
+    while (1) {
+        printf("\nTwo-Level Directory Operations:\n");
+        printf("1. Create a directory\n");
+        printf("2. Create a file\n");
+        printf("3. Delete a file\n");
+        printf("4. List files in a directory\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter the name of the directory to create: ");
+                scanf("%s", dirname);
+                createDirectory(&fs, dirname);
+                break;
+            case 2:
+                printf("Enter the name of the directory to create the file in: ");
+                scanf("%s", dirname);
+                printf("Enter the name of the file to create: ");
+                scanf("%s", filename);
+                createFile(&fs, dirname, filename);
+                break;
+            case 3:
+                printf("Enter the name of the directory containing the file to delete: ");
+                scanf("%s
