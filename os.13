@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_BLOCKS 100
+
+// Structure to represent memory block
+typedef struct {
+    int id;       // Block ID
+    int size;     // Block size
+    int allocated;// Allocation status (1 if allocated, 0 if free)
+} Block;
+
+// Function to initialize memory blocks
+void initializeBlocks(Block blocks[], int num_blocks) {
+    for (int i = 0; i < num_blocks; i++) {
+        blocks[i].id = i + 1;
+        blocks[i].size = rand() % 100 + 1; // Random size between 1 and 100
+        blocks[i].allocated = 0; // Initially all blocks are free
+    }
+}
+
+// Function to display memory blocks
+void displayBlocks(Block blocks[], int num_blocks) {
+    printf("Block ID\tSize\t\tStatus\n");
+    for (int i = 0; i < num_blocks; i++) {
+        printf("%d\t\t%d KB\t\t%s\n", blocks[i].id, blocks[i].size, (blocks[i].allocated == 1) ? "Allocated" : "Free");
+    }
+}
+
+// Function to allocate memory using First Fit strategy
+void firstFit(Block blocks[], int num_blocks, int process_size) {
+    for (int i = 0; i < num_blocks; i++) {
+        if (blocks[i].allocated == 0 && blocks[i].size >= process_size) {
+            blocks[i].allocated = 1;
+            printf("Memory allocated using First Fit strategy in block %d\n", blocks[i].id);
+            return;
+        }
+    }
+    printf("Memory allocation failed using First Fit strategy\n");
+}
+
+// Function to allocate memory using Best Fit strategy
+void bestFit(Block blocks[], int num_blocks, int process_size) {
+    int
