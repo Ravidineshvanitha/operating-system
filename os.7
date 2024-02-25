@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Process structure
+typedef struct {
+    int pid;            // Process ID
+    int arrival_time;   // Arrival time of the process
+    int burst_time;     // Burst time of the process
+    int completion_time;// Completion time of the process
+    int turnaround_time;// Turnaround time of the process
+    int waiting_time;   // Waiting time of the process
+} Process;
+
+// Function to swap two processes
+void swap(Process *xp, Process *yp) {
+    Process temp = *xp;
+    *xp = *yp;
+    *yp = temp;
+}
+
+// Function to perform Selection Sort on processes based on burst time
+void sortByBurstTime(Process processes[], int n) {
+    int i, j;
+    for (i = 0; i < n - 1; i++) {
+        for (j = 0; j < n - i - 1; j++) {
+            if (processes[j].burst_time > processes[j + 1].burst_time) {
+                swap(&processes[j], &processes[j + 1]);
+            }
+        }
+    }
+}
+
+// Function to calculate completion time, turnaround time, and waiting time for each process
+void calculateTimes(Process processes[], int n) {
+    int completion_time = 0;
+
+    for (int i = 0; i < n; i++) {
+        completion_time += processes[i].burst_time;
+        processes[i].completion_time = completion_time;
+        processes[i].turnaround_time = processes[i].completion_time - processes[i].arrival_time;
+        processes[i].waiting_time = processes[i].turnaround_time - processes[i].burst_time;
+    }
+}
+
+// Function to calculate average waiting and turna
